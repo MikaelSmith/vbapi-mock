@@ -67,14 +67,21 @@
   (as_room room_code
            #(str "deleted")))
 
+(defn reorder-queue [{room_code :room_code, from :from, to :to}]
+  (as_room room_code
+           #(if from
+              (str "move from " from " to " (or to 0))
+              "specify a song index")))
+
+
 (defroutes app-routes
   (GET "/ping" [] "pong")
   (GET (str "/api/" vbapi-version "/queue") {params :params} {:body (get-queue params)})
   (POST (str "/api/" vbapi-version "/queue") {params :params} {:body (post-queue params)})
   (DELETE (str "/api/" vbapi-version "/queue") {params :params} {:body (del-queue params)})
+  (POST (str "/api/" vbapi-version "/queue/reorder") {params :params} {:body (reorder-queue params)})
   (route/not-found "Not Found"))
 
-; Disable anti-forgery (CSRF) protection; as the project states, it's not appropriate for web services
 (def app
   (-> (handler/api app-routes)
       (middleware/wrap-json-body)
