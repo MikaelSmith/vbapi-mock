@@ -15,7 +15,7 @@
 (defn as_room [room_code action]
   (if (valid_room? room_code)
     (action)
-    (str room_code " is not a valid room code")))
+    {:error "Invalid room_code", :status 401}))
 
 (defn get-queue [{room_code :room_code}]
   (as_room room_code
@@ -61,17 +61,21 @@
                  :artist "Journey",
                  :duration 268128
                  })
-              "specify a valid song_id")))
+              {:error "Missing parameter: song_id"
+               :status 400})))
 
 (defn del-queue [{room_code :room_code, from :from}]
   (as_room room_code
-           #(str "deleted")))
+           #(hash-map :action (str "deleted " (or from "queue"))
+                      :status 200)))
 
 (defn reorder-queue [{room_code :room_code, from :from, to :to}]
   (as_room room_code
            #(if from
-              (str "move from " from " to " (or to 0))
-              "specify a song index")))
+              {:action (str "move from " from " to " (or to 0))
+               :status 200}
+              {:error "Missing parameter: from"
+               :status 400})))
 
 
 (defroutes app-routes
