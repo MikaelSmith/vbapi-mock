@@ -30,7 +30,7 @@
                              :position 30000,
                              :paused false
                              },
-              :songs_queued 1,
+              :songs_queued 3,
               :queue [
                       {
                        :index 0,
@@ -39,6 +39,22 @@
                        :title "Summerboy",
                        :artist "Lady Gaga",
                        :duration 242865
+                       }
+                      {
+                       :index 1,
+                       :song_id 69002,
+                       :play_id "G-Test-6c4008b3e6c4-1435717770940-2",
+                       :title "Pokerface",
+                       :artist "Lady Gaga",
+                       :duration 210000
+                       }
+                      {
+                       :index 2,
+                       :song_id 69003,
+                       :play_id "G-Test-6c4008b3e6c4-1435717770940-2",
+                       :title "Shake It Off",
+                       :artist "Taylor Swift",
+                       :duration 280000
                        }
                       ]
               )))
