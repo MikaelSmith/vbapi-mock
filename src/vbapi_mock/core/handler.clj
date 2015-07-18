@@ -82,24 +82,26 @@
 
 (defn del-queue [{room_code :room_code, from :from}]
   (as_room room_code
-           #(hash-map :action (str "deleted " (or from "queue"))
-                      :status 200)))
+           #(hash-map :action (str "deleted " (or from "queue")))))
 
 (defn reorder-queue [{room_code :room_code, from :from, to :to}]
   (as_room room_code
            #(if from
-              {:action (str "move from " from " to " (or to 0))
-               :status 200}
+              {:action (str "move from " from " to " (or to 0))}
               {:error "Missing parameter: from"
                :status 400})))
 
+(defn wrap-response [resp]
+  (if-let [stat (:status resp)]
+    {:status stat :body resp}
+    {:body resp}))
 
 (defroutes app-routes
   (GET "/ping" [] "pong")
-  (GET (str "/api/" vbapi-version "/queue") {params :params} {:body (get-queue params)})
-  (POST (str "/api/" vbapi-version "/queue") {params :params} {:body (post-queue params)})
-  (DELETE (str "/api/" vbapi-version "/queue") {params :params} {:body (del-queue params)})
-  (POST (str "/api/" vbapi-version "/queue/reorder") {params :params} {:body (reorder-queue params)})
+  (GET (str "/api/" vbapi-version "/queue") {params :params} (wrap-response (get-queue params)))
+  (POST (str "/api/" vbapi-version "/queue") {params :params} (wrap-response (post-queue params)))
+  (DELETE (str "/api/" vbapi-version "/queue") {params :params} (wrap-response (del-queue params)))
+  (POST (str "/api/" vbapi-version "/queue/reorder") {params :params} (wrap-response (reorder-queue params)))
   (route/not-found "Not Found"))
 
 (def app
