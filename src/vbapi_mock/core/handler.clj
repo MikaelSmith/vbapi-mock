@@ -6,7 +6,8 @@
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]]
             [clojure.string :as str]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [clj-http.client :as client]))
 
 (def vbapi-room-code (env :vbapi-room-code))
 (def vbapi-version "v1")
@@ -91,6 +92,15 @@
               {:error "Missing parameter: from"
                :status 400})))
 
+(defn search-songs [{query :query}]
+  (if query
+    (do
+     (log/infof "Searching for songs matching %s" query)
+     (client/get (str "http://vbsongs.com/api" vbapi-version "/songs/search")
+                 {:query-params {:query query}
+                  :content-type :json
+                  :throw-exceptions false}))))
+
 (defn wrap-response [resp]
   (if-let [stat (:status resp)]
     {:status stat :body resp}
@@ -102,6 +112,7 @@
   (POST (str "/api/" vbapi-version "/queue") {params :params} (wrap-response (post-queue params)))
   (DELETE (str "/api/" vbapi-version "/queue") {params :params} (wrap-response (del-queue params)))
   (POST (str "/api/" vbapi-version "/queue/reorder") {params :params} (wrap-response (reorder-queue params)))
+  (GET (str "/api/" vbapi-version "/songs/search") {params :params} (search-songs params))
   (route/not-found "Not Found"))
 
 (def app

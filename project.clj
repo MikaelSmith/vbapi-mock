@@ -7,7 +7,8 @@
                  [ring/ring-json "0.3.1"]
                  [ring/ring-jetty-adapter "1.2.2"]
                  [environ "0.5.0"]
-                 [org.clojure/tools.logging "0.3.1"]]
+                 [org.clojure/tools.logging "0.3.1"]
+                 [clj-http "2.0.0"]]
   :plugins [[environ/environ.lein "0.2.1"]
             [lein-ring "0.8.13"]]
   :ring {:handler vbapi-mock.core.handler/app}
