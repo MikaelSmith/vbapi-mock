@@ -96,10 +96,10 @@
   (if query
     (do
      (log/infof "Searching for songs matching %s" query)
-     (client/get (str "http://vbsongs.com/api" vbapi-version "/songs/search")
-                 {:query-params {:query query}
-                  :content-type :json
-                  :throw-exceptions false}))))
+     (:body (client/get (str "http://vbsongs.com/api/" vbapi-version "/songs/search")
+                        {:query-params {:query query}
+                         :accept :json
+                         :throw-exceptions false})))))
 
 (defn wrap-response [resp]
   (if-let [stat (:status resp)]
@@ -112,7 +112,7 @@
   (POST (str "/api/" vbapi-version "/queue") {params :params} (wrap-response (post-queue params)))
   (DELETE (str "/api/" vbapi-version "/queue") {params :params} (wrap-response (del-queue params)))
   (POST (str "/api/" vbapi-version "/queue/reorder") {params :params} (wrap-response (reorder-queue params)))
-  (GET (str "/api/" vbapi-version "/songs/search") {params :params} (search-songs params))
+  (GET (str "/api/" vbapi-version "/songs/search") {params :params} (wrap-response (search-songs params)))
   (route/not-found "Not Found"))
 
 (def app
